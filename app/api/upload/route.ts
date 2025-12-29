@@ -12,7 +12,17 @@ const s3Client = new S3Client({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
     const { latexCode } = body;
 
     // Validate input
@@ -25,9 +35,18 @@ export async function POST(request: NextRequest) {
 
     // Check if required environment variables are set
     if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      console.error('AWS credentials are not configured');
       return NextResponse.json(
         { error: 'AWS credentials are not configured' },
         { status: 500 }
+      );
+    }
+
+    // Validate LaTeX code length (prevent extremely large files)
+    if (latexCode.length > 10 * 1024 * 1024) { // 10MB limit
+      return NextResponse.json(
+        { error: 'LaTeX code exceeds maximum size limit of 10MB' },
+        { status: 400 }
       );
     }
 
@@ -58,15 +77,21 @@ export async function POST(request: NextRequest) {
     
     // Handle specific AWS errors
     if (error instanceof Error) {
-      if (error.message.includes('credentials')) {
+      if (error.message.includes('credentials') || error.message.includes('Credential')) {
         return NextResponse.json(
           { error: 'AWS credentials are invalid or missing' },
           { status: 500 }
         );
       }
-      if (error.message.includes('bucket')) {
+      if (error.message.includes('bucket') || error.message.includes('Bucket')) {
         return NextResponse.json(
           { error: 'S3 bucket access error. Please check bucket name and permissions.' },
+          { status: 500 }
+        );
+      }
+      if (error.message.includes('Network') || error.message.includes('timeout')) {
+        return NextResponse.json(
+          { error: 'Network error. Please check your connection and try again.' },
           { status: 500 }
         );
       }
