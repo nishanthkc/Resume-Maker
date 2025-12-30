@@ -22,7 +22,7 @@ export default function Button({
   const baseStyles = 'px-6 py-2.5 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantStyles = {
-    primary: 'bg-white dark:bg-white text-black dark:text-black',
+    primary: 'button-primary',
     secondary: 'bg-foreground-secondary text-background',
     outline: 'border border-border text-foreground hover:bg-background-secondary',
   };

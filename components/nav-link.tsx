@@ -10,10 +10,9 @@ export default function NavLink({ href, children, className = '' }: NavLinkProps
   return (
     <Link
       href={href}
-      className={`text-foreground-muted hover:text-foreground transition-colors text-sm font-medium ${className}`}
+      className={`nav-link text-sm font-medium transition-colors ${className}`}
     >
       {children}
     </Link>
   );
 }
-

@@ -67,17 +67,87 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Base Styles */
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 /* Smooth transitions for theme switching */
 * {
   transition-property: background-color, border-color, color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 500ms;
+}
+
+/* Serif highlight with gradient text effect */
+.serif-highlight {
+  font-family: var(--font-geist-sans);
+  font-style: italic;
+  background: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:root.light .serif-highlight {
+  background: linear-gradient(135deg, #000000 0%, #737373 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Serif italic font for large text */
+.font-serif {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: rgba(20, 20, 20, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+:root.light .navbar {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Nav link styling */
+.nav-link {
+  color: var(--foreground-muted);
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--foreground);
+}
+
+:root.light .nav-link {
+  color: #000000;
+}
+
+:root.light .nav-link:hover {
+  color: #171717;
+}
+
+/* Button primary variant - switches colors with theme */
+.button-primary {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+:root.light .button-primary {
+  background-color: #000000;
+  color: #ffffff;
 }
