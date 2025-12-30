@@ -3,7 +3,7 @@
 ## Project Overview
 The application is used to make tailored resumes for users. Users provide their current resume (PDF/DOCX/LaTeX), job description, job title, output resume template, and optional personalization prompt. The system processes all inputs and outputs a tailored resume for the specific job.
 
-**Note:** Keep updating README before every step while making code changes.
+**Note:** Keep updating README.md and Project.md(tick and update) files before every step while making code changes.
 
 ---
 

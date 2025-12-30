@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+/* Color Palette - Dark Theme (Default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Background Colors */
+  --background: #000000;
+  --background-secondary: #0a0a0a;
+  --background-tertiary: #171717;
+  
+  /* Foreground Colors */
+  --foreground: #ffffff;
+  --foreground-secondary: #f5f5f5;
+  --foreground-muted: #a3a3a3;
+  
+  /* Border Colors */
+  --border: #262626;
+  --border-light: #404040;
+  
+  /* Accent Colors */
+  --accent: #ffffff;
+  --accent-hover: #e5e5e5;
 }
 
+/* Light Theme - Applied when .light class is on html */
+:root.light {
+  /* Background Colors */
+  --background: #ffffff;
+  --background-secondary: #fafafa;
+  --background-tertiary: #f5f5f5;
+  
+  /* Foreground Colors */
+  --foreground: #000000;
+  --foreground-secondary: #171717;
+  --foreground-muted: #737373;
+  
+  /* Border Colors */
+  --border: #e5e5e5;
+  --border-light: #d4d4d4;
+  
+  /* Accent Colors */
+  --accent: #000000;
+  --accent-hover: #171717;
+}
+
+/* Tailwind Theme Configuration */
 @theme inline {
+  /* Background Colors */
   --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-background-tertiary: var(--background-tertiary);
+  
+  /* Foreground Colors */
   --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-muted: var(--foreground-muted);
+  
+  /* Border Colors */
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  
+  /* Accent Colors */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base Styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }

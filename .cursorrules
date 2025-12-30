@@ -1,0 +1,147 @@
+# .cursorrules — Next.js Development Rules
+
+You are building an application as described in Project.md.
+Always align with Project.md.
+Do not invent features, workflows, data models, or assumptions that are not explicitly in scope.
+
+────────────────────────────────────────
+PRIME DIRECTIVES
+────────────────────────────────────────
+- Follow Project.md as the single source of truth.
+- If something is unclear or missing, ask for clarification instead of guessing.
+- Make small, incremental, testable changes.
+- Keep the application deployable at all times.
+- Do not refactor unrelated code unless explicitly requested.
+
+────────────────────────────────────────
+NEXT.JS ARCHITECTURE
+────────────────────────────────────────
+- Use the App Router (`app/`) exclusively.
+- Prefer Server Components by default.
+- Add `"use client"` only when required:
+  - React hooks
+  - browser APIs
+  - event handlers
+- Never mix server-only logic into client components.
+
+────────────────────────────────────────
+PROJECT STRUCTURE
+────────────────────────────────────────
+- `app/` → routes, layouts, pages
+- `app/api/` → route handlers (`route.ts`)
+- `components/` → reusable UI components
+- `components/ui/` → presentational components only
+- `lib/` → shared utilities and helpers
+- `lib/server/` → server-only logic (never imported by client code)
+- `hooks/` → custom React hooks
+- `types/` → shared TypeScript types
+
+────────────────────────────────────────
+FILE & NAMING CONVENTIONS
+────────────────────────────────────────
+- File names: kebab-case
+- React components: PascalCase
+- Utility files: lowercase or camelCase
+- Pages: `page.tsx`
+- Layouts: `layout.tsx`
+- Loading states: `loading.tsx`
+- Error boundaries: `error.tsx`
+
+────────────────────────────────────────
+TYPE SAFETY
+────────────────────────────────────────
+- Use TypeScript everywhere.
+- Avoid `any`.
+- Use `unknown` and narrow explicitly.
+- Define explicit types for:
+  - component props
+  - API request and response payloads
+  - shared data structures
+
+────────────────────────────────────────
+STATE MANAGEMENT
+────────────────────────────────────────
+- Prefer local component state first.
+- Use React Context only for shared, cross-component state.
+- Do not introduce external state libraries unless justified.
+- Keep state minimal and serializable.
+
+────────────────────────────────────────
+DATA FETCHING & SIDE EFFECTS
+────────────────────────────────────────
+- Prefer server-side data fetching in Server Components.
+- Use route handlers for mutations and side effects.
+- Do not call external services directly from client components.
+- Handle loading and error states explicitly.
+
+────────────────────────────────────────
+API ROUTES (ROUTE HANDLERS)
+────────────────────────────────────────
+- Use `app/api/**/route.ts`.
+- Validate input on the server.
+- Return consistent JSON shapes.
+- Always return appropriate HTTP status codes.
+- Never expose secrets or internal stack traces.
+
+────────────────────────────────────────
+SECURITY & SECRETS
+────────────────────────────────────────
+- Never expose secrets to the client.
+- Never hardcode credentials.
+- Use environment variables for all secrets.
+- Keep secret usage confined to server-only files.
+- Validate and sanitize all user input.
+
+────────────────────────────────────────
+STYLING
+────────────────────────────────────────
+- Use Tailwind CSS or CSS Modules.
+- Keep styling consistent and utility-first.
+- Avoid large monolithic components.
+- Prefer composition over inheritance.
+
+────────────────────────────────────────
+PERFORMANCE
+────────────────────────────────────────
+- Minimize client-side JavaScript.
+- Avoid unnecessary `"use client"`.
+- Use dynamic imports for heavy components.
+- Use `next/image` and `next/font` where appropriate.
+
+────────────────────────────────────────
+ERROR HANDLING
+────────────────────────────────────────
+- Use `error.tsx` for route-level error boundaries.
+- Show user-friendly error messages.
+- Log errors server-side.
+- Never leak sensitive details to the client.
+
+────────────────────────────────────────
+DOCUMENTATION DISCIPLINE
+────────────────────────────────────────
+- Before making meaningful changes:
+  - State the intent clearly.
+- After making changes:
+  - Summarize what changed and why.
+- Keep Project.md or README.md updated.
+- Document new environment variables or setup steps.
+
+────────────────────────────────────────
+CURSOR DEVELOPMENT BEHAVIOR
+────────────────────────────────────────
+When implementing a feature:
+1. Reconfirm the goal against Project.md.
+2. Identify the minimal set of files to change.
+3. Implement the smallest working solution.
+4. Avoid premature abstraction or optimization.
+5. Prefer readability over cleverness.
+
+────────────────────────────────────────
+NON-GOALS
+────────────────────────────────────────
+- Do not assume business rules or workflows.
+- Do not introduce libraries or patterns without justification.
+- Do not optimize for scale prematurely.
+- Do not mix client and server responsibilities.
+
+End of rules.
