@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ResumeFormProvider } from '@/context/resume-form-context';
 
 export default function ResumeBuilder() {
   const [latexCode, setLatexCode] = useState('');
@@ -41,9 +42,10 @@ export default function ResumeBuilder() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background font-sans">
-      <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-start py-16 px-8 bg-background">
-        <div className="w-full max-w-3xl">
+    <ResumeFormProvider>
+      <div className="flex min-h-screen items-center justify-center bg-background font-sans">
+        <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-start py-16 px-8 bg-background">
+          <div className="w-full max-w-3xl">
           <h1 className="text-4xl font-semibold leading-tight tracking-tight text-foreground mb-2">
             Resume Maker
           </h1>
@@ -137,9 +139,10 @@ export default function ResumeBuilder() {
               </form>
             </div>
           )}
-        </div>
-      </main>
-    </div>
+          </div>
+        </main>
+      </div>
+    </ResumeFormProvider>
   );
 }
 
