@@ -41,13 +41,13 @@ export default function ResumeBuilder() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-start py-16 px-8 bg-white dark:bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-background font-sans">
+      <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-start py-16 px-8 bg-background">
         <div className="w-full max-w-3xl">
-          <h1 className="text-4xl font-semibold leading-tight tracking-tight text-black dark:text-zinc-50 mb-2">
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight text-foreground mb-2">
             Resume Maker
           </h1>
-          <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400 mb-8">
+          <p className="text-lg leading-8 text-foreground-muted mb-8">
             Paste your LaTeX resume code below to upload it to S3 and get an Overleaf link.
           </p>
 
@@ -55,7 +55,7 @@ export default function ResumeBuilder() {
             <div>
               <label
                 htmlFor="latex-code"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                className="block text-sm font-medium text-foreground-secondary mb-2"
               >
                 LaTeX Resume Code
               </label>
@@ -64,7 +64,7 @@ export default function ResumeBuilder() {
                 value={latexCode}
                 onChange={(e) => setLatexCode(e.target.value)}
                 placeholder="Paste your LaTeX code here..."
-                className="w-full h-96 px-4 py-3 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:focus:ring-zinc-400 resize-y"
+                className="w-full h-96 px-4 py-3 border border-border rounded-lg bg-background-secondary text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-y"
                 required
                 disabled={loading}
               />
@@ -73,7 +73,7 @@ export default function ResumeBuilder() {
             <button
               type="submit"
               disabled={loading || !latexCode.trim()}
-              className="w-full flex items-center justify-center gap-2 h-12 rounded-full bg-zinc-950 dark:bg-zinc-50 text-white dark:text-black px-6 font-medium transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 h-12 rounded-full bg-accent text-background px-6 font-medium transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -106,19 +106,19 @@ export default function ResumeBuilder() {
           </form>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-red-800 dark:text-red-200 text-sm font-medium">
+            <div className="mt-6 p-4 bg-background-secondary border border-border rounded-lg">
+              <p className="text-error text-sm font-medium">
                 Error: {error}
               </p>
             </div>
           )}
 
           {overleafUrl && (
-            <div className="mt-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-              <h2 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-4">
+            <div className="mt-6 p-6 bg-background-secondary border border-border rounded-lg">
+              <h2 className="text-lg font-semibold text-foreground mb-4">
                 Success! Your resume has been uploaded.
               </h2>
-              <p className="text-sm text-green-800 dark:text-green-200 mb-4">
+              <p className="text-sm text-foreground-muted mb-4">
                 S3 URL: <a href={s3Url || ''} target="_blank" rel="noopener noreferrer" className="underline break-all">{s3Url}</a>
               </p>
               <form
@@ -130,7 +130,7 @@ export default function ResumeBuilder() {
                 <input type="hidden" name="snip_uri" value={overleafUrl} />
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 h-12 rounded-full bg-green-600 hover:bg-green-700 text-white px-6 font-medium transition-colors"
+                  className="w-full flex items-center justify-center gap-2 h-12 rounded-full bg-success bg-success-hover text-white px-6 font-medium transition-colors"
                 >
                   Open in Overleaf
                 </button>

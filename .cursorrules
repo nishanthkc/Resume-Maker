@@ -93,12 +93,61 @@ SECURITY & SECRETS
 - Validate and sanitize all user input.
 
 ────────────────────────────────────────
-STYLING
+STYLING & THEME GUIDELINES
 ────────────────────────────────────────
 - Use Tailwind CSS or CSS Modules.
 - Keep styling consistent and utility-first.
 - Avoid large monolithic components.
 - Prefer composition over inheritance.
+
+CSS Variable Pattern:
+- Always define new colors in CSS variable system first (in globals.css).
+- Never use hardcoded hex/rgb colors in components.
+- Use semantic variable names (--error, --success) not color names (--red-500).
+- All colors must have both dark and light theme values.
+- Variables are defined in :root/.dark (dark theme) and .light (light theme) sections.
+- Map new variables to Tailwind utilities in @theme inline section.
+
+Theme-Aware Development:
+- All colors must work in both dark and light themes automatically.
+- Test components in both themes during development.
+- Use CSS variables via Tailwind mapped classes (bg-background, text-foreground) or semantic utilities.
+- Never use Tailwind color utilities directly (e.g., text-red-600, bg-green-500) for theme-aware colors.
+- Use semantic utility classes when available: text-error, bg-success, etc.
+
+Color System:
+- Background: --background, --background-secondary, --background-tertiary
+- Foreground: --foreground, --foreground-secondary, --foreground-muted
+- Borders: --border, --border-light
+- Accent: --accent, --accent-hover
+- Status: --error, --error-hover, --success, --success-hover
+- Navbar: --navbar-bg, --navbar-border, --navbar-shadow
+
+Transition Standards:
+- Global theme transitions: 500ms (handled automatically via * selector in globals.css).
+- Component interactions (hover, focus): 300ms.
+- Use transition-colors for color changes.
+- Use transition-opacity for opacity changes.
+- Use transition-transform for transforms.
+
+Hover Pattern Standards:
+- Default interactive hover: hover:opacity-80 (for simple opacity-based interactions).
+- Color-based hover: Use CSS variable hovers (hover:bg-accent-hover, hover:text-foreground-muted).
+- Maintain consistency across similar components.
+- Special cases (like logo-strip) may use different opacity values for visual effect.
+
+Utility Class Pattern:
+- Prefer semantic utility classes (text-error, bg-success) over Tailwind color utilities.
+- Create new utilities in globals.css when needed for semantic meaning.
+- Use Tailwind utilities for layout, spacing, typography.
+- Keep component-specific CSS classes minimal and semantic.
+
+Component Styling Best Practices:
+- Use Tailwind utilities for layout, spacing, typography.
+- Use CSS variables for colors (via Tailwind mapped classes or direct var()).
+- Keep component CSS classes simple and semantic.
+- Document any component-specific styling decisions.
+- When adding new status colors or semantic colors, add to CSS variable system first.
 
 ────────────────────────────────────────
 PERFORMANCE

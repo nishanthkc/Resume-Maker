@@ -7,10 +7,10 @@ import ThemeToggle from '@/components/theme-toggle';
 
 export default function Navbar() {
   return (
-    <nav className="navbar sticky top-0 z-[1000] px-10 py-5 flex items-center justify-between backdrop-blur-[20px] border-b shadow-[0_1px_10px_rgba(0,0,0,0.6)]">
+    <nav className="navbar sticky top-0 z-[1000] px-10 py-5 flex items-center justify-between backdrop-blur-[20px] border-b">
       {/* Left: Logo/Brand */}
       <div className="font-semibold text-2xl">
-        <Link href="/" className="hover:opacity-80 transition-opacity">
+        <Link href="/" className="text-foreground hover:opacity-80 transition-opacity">
           Resume Maker
         </Link>
       </div>

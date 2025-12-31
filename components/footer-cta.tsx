@@ -10,7 +10,7 @@ export default function FooterCTA({ className = '' }: FooterCTAProps) {
       <div className="max-w-4xl mx-auto">
         {/* Green Dot Message */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+          <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
           <span className="text-sm text-foreground-muted uppercase tracking-wider">
             We're here to help
           </span>

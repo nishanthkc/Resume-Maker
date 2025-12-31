@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 /* Color Palette - Dark Theme (Default) */
-:root {
+:root,
+.dark {
   /* Background Colors */
   --background: #000000;
   --background-secondary: #0a0a0a;
@@ -19,10 +20,21 @@
   /* Accent Colors */
   --accent: #ffffff;
   --accent-hover: #e5e5e5;
+  
+  /* Status Colors */
+  --error: #ef4444;
+  --error-hover: #dc2626;
+  --success: #22c55e;
+  --success-hover: #16a34a;
+  
+  /* Navbar Colors */
+  --navbar-bg: rgba(20, 20, 20, 0.6);
+  --navbar-border: rgba(255, 255, 255, 0.1);
+  --navbar-shadow: rgba(0, 0, 0, 0.6);
 }
 
 /* Light Theme - Applied when .light class is on html */
-:root.light {
+.light {
   /* Background Colors */
   --background: #ffffff;
   --background-secondary: #fafafa;
@@ -40,6 +52,17 @@
   /* Accent Colors */
   --accent: #000000;
   --accent-hover: #171717;
+  
+  /* Status Colors */
+  --error: #ef4444;
+  --error-hover: #dc2626;
+  --success: #22c55e;
+  --success-hover: #16a34a;
+  
+  /* Navbar Colors */
+  --navbar-bg: rgba(255, 255, 255, 0.6);
+  --navbar-border: rgba(0, 0, 0, 0.1);
+  --navbar-shadow: rgba(0, 0, 0, 0.1);
 }
 
 /* Tailwind Theme Configuration */
@@ -61,6 +84,17 @@
   /* Accent Colors */
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  
+  /* Status Colors */
+  --color-error: var(--error);
+  --color-error-hover: var(--error-hover);
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  
+  /* Navbar Colors */
+  --color-navbar-bg: var(--navbar-bg);
+  --color-navbar-border: var(--navbar-border);
+  --color-navbar-shadow: var(--navbar-shadow);
   
   /* Fonts */
   --font-sans: var(--font-geist-sans);
@@ -97,7 +131,7 @@ body {
   background-clip: text;
 }
 
-:root.light .serif-highlight {
+.light .serif-highlight {
   background: linear-gradient(135deg, #000000 0%, #737373 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -112,15 +146,10 @@ body {
 
 /* Navbar styling */
 .navbar {
-  background-color: rgba(20, 20, 20, 0.6);
-  border-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.5s ease, border-color 0.5s ease;
-}
-
-:root.light .navbar {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-color: rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--navbar-bg);
+  border-color: var(--navbar-border);
+  box-shadow: 0 1px 10px var(--navbar-shadow);
+  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 /* Nav link styling */
@@ -133,21 +162,29 @@ body {
   color: var(--foreground);
 }
 
-:root.light .nav-link {
-  color: #000000;
-}
-
-:root.light .nav-link:hover {
-  color: #171717;
-}
-
 /* Button primary variant - switches colors with theme */
 .button-primary {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--accent);
+  color: var(--background);
 }
 
-:root.light .button-primary {
-  background-color: #000000;
-  color: #ffffff;
+/* Status color utility classes */
+.text-error {
+  color: var(--error);
+}
+
+.bg-error {
+  background-color: var(--error);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.bg-success {
+  background-color: var(--success);
+}
+
+.bg-success-hover:hover {
+  background-color: var(--success-hover);
 }
