@@ -30,7 +30,7 @@ export interface ValidationResult {
 // Context value interface
 export interface ResumeFormContextValue {
   formData: ResumeFormData;
-  updateResumeFile: (file: ResumeFileData) => void;
+  updateResumeFile: (file: ResumeFileData | null) => void;
   updateJobDescription: (text: string) => void;
   updateJobRole: (role: string) => void;
   updateTemplate: (template: ResumeTemplate) => void;

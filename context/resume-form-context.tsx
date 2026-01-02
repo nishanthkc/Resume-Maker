@@ -26,14 +26,30 @@ export function ResumeFormProvider({ children, isAuthenticated = false }: Resume
   const [formData, setFormData] = useState<ResumeFormData>(initialFormData);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  // Update functions
-  const updateResumeFile = useCallback((file: ResumeFileData) => {
-    setFormData((prev) => ({ ...prev, resumeFile: file }));
+  // Helper function to clear a specific validation error
+  const clearValidationError = useCallback((key: string) => {
+    setValidationErrors((prev) => {
+      const { [key]: _, ...rest } = prev;
+      return rest;
+    });
   }, []);
+
+  // Update functions
+  const updateResumeFile = useCallback((file: ResumeFileData | null) => {
+    setFormData((prev) => ({ ...prev, resumeFile: file }));
+    // Clear error if file is provided
+    if (file !== null) {
+      clearValidationError('resumeFile');
+    }
+  }, [clearValidationError]);
 
   const updateJobDescription = useCallback((text: string) => {
     setFormData((prev) => ({ ...prev, jobDescription: text }));
-  }, []);
+    // Clear error if text is non-empty (after trim)
+    if (text.trim() !== '') {
+      clearValidationError('jobDescription');
+    }
+  }, [clearValidationError]);
 
   const updateJobRole = useCallback((role: string) => {
     setFormData((prev) => ({ ...prev, jobRole: role }));

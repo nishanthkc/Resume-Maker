@@ -188,3 +188,7 @@ body {
 .bg-success-hover:hover {
   background-color: var(--success-hover);
 }
+
+.border-error {
+  border-color: var(--error);
+}

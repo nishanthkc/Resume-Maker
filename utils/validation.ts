@@ -6,16 +6,21 @@ import type { ResumeFormData, ValidationResult } from '@/types/resume-form';
  * Returns errors for missing fields
  */
 export function validateStep1(data: Partial<ResumeFormData>): ValidationResult {
-  // TODO: Implement validation logic
-  // - Check if resumeFile is provided
-  // - Check if resumeFile size is less than 10MB
-  // - Check if resumeFile is of type pdf or tex or docx
-  // - Check if jobDescription is non-empty
-  // - Return appropriate error messages
-  
+  const errors: Record<string, string> = {};
+
+  // Check if resume file is provided
+  if (!data.resumeFile) {
+    errors.resumeFile = 'Please upload a resume file';
+  }
+
+  // Check if job description is provided and non-empty
+  if (!data.jobDescription || data.jobDescription.trim() === '') {
+    errors.jobDescription = 'Please provide a job description';
+  }
+
   return {
-    isValid: true,
-    errors: {},
+    isValid: Object.keys(errors).length === 0,
+    errors,
   };
 }
 

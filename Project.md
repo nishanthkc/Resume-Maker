@@ -122,11 +122,11 @@ A landing page with a brief description of the application and a "Get Started" b
 ### Phase 3: Step 1 - Resume Upload & Job Description
 
 #### Task 3.1: File Upload Component
-- [ ] Create drag-and-drop file upload area
-- [ ] Add file type validation (PDF, DOCX, .tex)
-- [ ] Add file size validation (10MB limit)
-- [ ] Show file preview/confirmation
-- [ ] Handle file removal
+- [x] Create drag-and-drop file upload area
+- [x] Add file type validation (PDF, DOCX, .tex)
+- [x] Add file size validation (10MB limit)
+- [x] Show file preview/confirmation
+- [x] Handle file removal
 
 #### Task 3.2: DOCX Text Extraction
 - [ ] Install and configure `mammoth`
@@ -148,22 +148,21 @@ A landing page with a brief description of the application and a "Get Started" b
 - [ ] Store LaTeX content in form context
 
 #### Task 3.5: Job Description Input
-- [ ] Create textarea for job description
-- [ ] Add character count (optional)
-- [ ] Validate minimum length
-- [ ] Store in form context
+- [x] Create textarea for job description
+- [x] Validate minimum length (required field)
+- [x] Store in form context
 
 #### Task 3.6: Step 1 Integration
-- [ ] Combine file upload + job description in Step 1 component
-- [ ] Add validation (both required)
-- [ ] Add "Next" button (disabled until valid)
-- [ ] Test all file types
+- [x] Combine file upload + job description in Step 1 component
+- [x] Add validation (both required)
+- [x] Add "Next" button (disabled until valid)
+- [x] Test all file types
 
 #### Task 3.7: Step Navigation System
-- [ ] Create `StepIndicator` component with progress visualization
-- [ ] Implement step navigation logic (next/back)
-- [ ] Add step validation before allowing progression
-- [ ] Create smooth transitions between steps
+- [x] Create `StepIndicator` component with progress visualization
+- [x] Implement step navigation logic (next/back)
+- [x] Add step validation before allowing progression
+- [x] Create smooth transitions between steps
 
 ---
 
@@ -510,3 +509,78 @@ OPENAI_API_KEY=
 - Consistent naming conventions (kebab-case files, PascalCase components)
 - Proper TypeScript types throughout
 - Error handling for context hook usage
+- DRY principles followed (shared utilities, reusable components)
+- Real-time error clearing for better UX
+- Component-level and step-level validation separation
+
+---
+
+## Phase 3: Step 1 - Resume Upload & Job Description ✅
+
+#### Task 3.1: File Upload Component ✅
+**Completed:**
+- Created `FileUpload` component (`components/file-upload.tsx`) with:
+  - Drag-and-drop file upload zone with visual feedback
+  - Click-to-browse file input
+  - File type validation (PDF, DOCX, .tex) - case-insensitive
+  - File size validation (10MB limit)
+  - File preview showing name, size, and type icon
+  - Remove button to clear selected file
+  - Error display with red border styling
+  - Component-level validation (immediate feedback)
+  - Theme-aware styling using CSS variables
+- Created shared file utilities (`utils/file-utils.ts`):
+  - `getFileExtension()`, `getFileTypeFromExtension()`, `getFileTypeFromFilename()`
+  - `formatFileSize()`, `getFileTypeIcon()`
+  - Constants: `ACCEPTED_EXTENSIONS`, `MAX_FILE_SIZE`
+- Error handling: Component-level errors take precedence over step-level errors
+
+#### Task 3.5: Job Description Input ✅
+**Completed:**
+- Created textarea for job description in Step 1
+- Integrated with `ResumeFormContext`
+- Real-time error clearing when text becomes valid
+- Error border styling when validation fails
+- Error message display below textarea
+
+#### Task 3.6: Step 1 Integration ✅
+**Completed:**
+- Combined file upload + job description in Step 1 component
+- Implemented `validateStep1()` in `utils/validation.ts`:
+  - Validates resume file is provided
+  - Validates job description is non-empty (after trim)
+  - Returns appropriate error messages
+- Step validation runs on "Next" button click
+- Real-time error clearing when fields become valid
+- Error UI with red borders and error messages
+
+#### Task 3.7: Step Navigation System ✅
+**Completed:**
+- Created `StepIndicator` component (`components/step-indicator.tsx`):
+  - Visual progress indicator showing current, completed, and pending steps
+  - Theme-aware styling
+  - Reusable component
+- Created `StepNavigation` component (`components/step-navigation.tsx`):
+  - Back/Next buttons with proper disabled states
+  - Customizable labels (e.g., "Complete" for last step)
+  - Reusable across all steps
+- Implemented step navigation logic in context:
+  - `nextStep()` validates current step before advancing
+  - `prevStep()` allows backward navigation without validation
+  - Step validation prevents progression with invalid data
+- Smooth transitions between steps
+
+### Additional Improvements
+- **Error UI System:**
+  - Added `border-error` utility class to CSS
+  - Red borders on form elements when errors exist
+  - Error messages displayed below fields
+- **Real-time Validation:**
+  - Errors clear immediately when fields become valid
+  - Component-level validation for immediate feedback
+  - Step-level validation on "Next" click
+- **Code Quality:**
+  - Extracted duplicate error clearing logic to helper function
+  - Fixed error precedence (component-level errors take priority)
+  - Follows DRY principles
+  - Clean, maintainable code structure
