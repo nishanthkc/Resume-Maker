@@ -129,23 +129,26 @@ A landing page with a brief description of the application and a "Get Started" b
 - [x] Handle file removal
 
 #### Task 3.2: DOCX Text Extraction
-- [ ] Install and configure `mammoth`
-- [ ] Create API route: `/api/extract-docx`
-- [ ] Implement DOCX text extraction
-- [ ] Handle extraction errors
-- [ ] Store extracted text in form context
+- [x] Install and configure `mammoth` (already installed)
+- [x] Create utility function: `extractDocxText()` in `utils/text-extraction.ts`
+- [x] Implement DOCX text extraction (client-side)
+- [x] Handle extraction errors
+- [x] Integrate with file upload handler
+- [x] Store extracted text in form context
 
 #### Task 3.3: PDF Text Extraction
-- [ ] Install and configure `pdfjs-dist`
-- [ ] Create API route: `/api/extract-pdf`
-- [ ] Implement PDF text extraction (handle multi-page)
-- [ ] Handle extraction errors
-- [ ] Store extracted text in form context
+- [x] Install and configure `pdfjs-dist` (already installed)
+- [x] Create utility function: `extractPdfText()` in `utils/text-extraction.ts`
+- [x] Implement PDF text extraction (client-side, handle multi-page)
+- [x] Handle extraction errors
+- [x] Integrate with file upload handler
+- [x] Store extracted text in form context
 
 #### Task 3.4: LaTeX File Reading
-- [ ] Create file reader for .tex files
-- [ ] Read file content directly (client-side)
-- [ ] Store LaTeX content in form context
+- [x] Create utility function: `readLatexFile()` in `utils/text-extraction.ts`
+- [x] Read file content directly (client-side using FileReader)
+- [x] Integrate with file upload handler
+- [x] Store LaTeX content in form context
 
 #### Task 3.5: Job Description Input
 - [x] Create textarea for job description
@@ -584,3 +587,78 @@ OPENAI_API_KEY=
   - Fixed error precedence (component-level errors take priority)
   - Follows DRY principles
   - Clean, maintainable code structure
+
+#### Task 3.2: DOCX Text Extraction ✅
+**Completed:**
+- Created `extractDocxText()` function in `utils/text-extraction.ts`
+- Uses `mammoth` library for DOCX text extraction
+- Client-side processing (no API routes needed)
+- Error handling with user-friendly error messages
+- Integrated with file upload handler in `app/resume-builder/page.tsx`
+- Extracted text stored in `ResumeFileData.extractedText` field
+
+#### Task 3.3: PDF Text Extraction ✅
+**Completed:**
+- Created `extractPdfText()` function in `utils/text-extraction.ts`
+- Uses `pdfjs-dist` library with dynamic import (to avoid SSR issues)
+- PDF.js worker setup: Worker file copied to `public/pdf.worker.min.mjs`
+- Multi-page PDF support (iterates through all pages)
+- Client-side processing (no API routes needed)
+- Error handling with user-friendly error messages
+- Integrated with file upload handler
+- Extracted text stored in `ResumeFileData.extractedText` field
+
+#### Task 3.4: LaTeX File Reading ✅
+**Completed:**
+- Created `readLatexFile()` function in `utils/text-extraction.ts`
+- Uses browser's native `FileReader.readAsText()` API
+- No external library needed (LaTeX files are plain text)
+- Promise-based implementation for async/await compatibility
+- UTF-8 encoding for proper text reading
+- Error handling with user-friendly error messages
+- Integrated with file upload handler
+- LaTeX content stored in `ResumeFileData.extractedText` field
+
+### Key Learnings: Client-Side Text Extraction
+
+**1. Client-Side vs Server-Side Processing**
+- All text extraction (DOCX, PDF, LaTeX) is performed client-side using browser APIs
+- No API routes needed - reduces server load and improves user experience
+- Files are processed directly in the browser after upload
+
+**2. PDF.js Worker Setup for Next.js App Router**
+- `pdfjs-dist` requires a worker file for PDF processing
+- Worker file must be accessible from the browser (placed in `public/` folder)
+- Dynamic import (`await import('pdfjs-dist')`) is essential to avoid SSR errors
+- Browser-only libraries like `pdfjs-dist` cannot be imported at module level in Next.js
+- Error: "DOMMatrix is not defined" occurs when browser-only code runs during SSR
+
+**3. Dynamic Imports for Browser-Only Libraries**
+- Libraries that use browser APIs (like `pdfjs-dist`) must be dynamically imported
+- Top-level imports cause SSR errors because Node.js doesn't have browser APIs
+- Solution: Use `await import('pdfjs-dist')` inside the function that uses it
+- This ensures the library only loads on the client side when actually needed
+
+**4. FileReader API for Plain Text Files**
+- LaTeX files are plain text, so no library is needed
+- `FileReader.readAsText()` is a browser-native API
+- Wrapped in Promise for async/await compatibility
+- UTF-8 encoding ensures proper character handling
+
+**5. Error Handling Patterns**
+- Consistent error handling across all extraction functions
+- User-friendly error messages displayed via FileUpload component
+- Errors don't prevent file metadata from being stored (user can see error and retry)
+- Extraction errors are separate from file validation errors
+
+**6. Multi-Page PDF Handling**
+- PDFs can have multiple pages
+- Extract text from each page using a loop
+- Concatenate page texts with double newlines (`\n\n`) for separation
+- All pages processed sequentially to maintain order
+
+**7. File Processing Flow**
+- File upload → File validation (type, size) → Text extraction → Store in context
+- Extraction happens asynchronously after file selection
+- User sees loading state during extraction
+- Errors are displayed inline without blocking the UI

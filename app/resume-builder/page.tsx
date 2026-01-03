@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ResumeFormProvider, useResumeForm } from '@/context/resume-form-context';
 import FileUpload from '@/components/file-upload';
 import StepIndicator from '@/components/step-indicator';
 import StepNavigation from '@/components/step-navigation';
 import type { ResumeFileData } from '@/types/resume-form';
 import { getFileTypeFromFilename } from '@/utils/file-utils';
+import { extractDocxText, extractPdfText, readLatexFile } from '@/utils/text-extraction';
 
 function ResumeBuilderContent() {
   const {
@@ -17,24 +18,63 @@ function ResumeBuilderContent() {
     prevStep,
     validationErrors,
   } = useResumeForm();
+  const [extractionError, setExtractionError] = useState<string | null>(null);
 
-  const handleFileSelect = useCallback((file: File) => {
+  const handleFileSelect = useCallback(async (file: File) => {
     const fileType = getFileTypeFromFilename(file.name);
     if (!fileType) {
       return; // Should not happen due to component validation, but handle gracefully
+    }
+
+    setExtractionError(null);
+
+    let extractedText = '';
+    
+    // Extract text based on file type
+    if (fileType === 'docx') {
+      try {
+        extractedText = await extractDocxText(file);
+        console.log('Extracted DOCX text:', extractedText);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to extract text from DOCX file';
+        setExtractionError(errorMessage);
+        // Still update context with file metadata, but without extracted text
+        // User can see the error and try again
+      }
+    } else if (fileType === 'pdf') {
+      try {
+        extractedText = await extractPdfText(file);
+        console.log('Extracted PDF text:', extractedText);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to extract text from PDF file';
+        setExtractionError(errorMessage);
+        // Still update context with file metadata, but without extracted text
+        // User can see the error and try again
+      }
+    } else if (fileType === 'tex') {
+      try {
+        extractedText = await readLatexFile(file);
+        console.log('Read LaTeX file:', extractedText);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to read LaTeX file';
+        setExtractionError(errorMessage);
+        // Still update context with file metadata, but without extracted text
+        // User can see the error and try again
+      }
     }
 
     const fileData: ResumeFileData = {
       type: fileType,
       name: file.name,
       size: file.size,
-      extractedText: '', // Will be populated in Tasks 3.2-3.4
+      extractedText,
     };
 
     updateResumeFile(fileData);
   }, [updateResumeFile]);
 
   const handleFileRemove = useCallback(() => {
+    setExtractionError(null);
     updateResumeFile(null);
   }, [updateResumeFile]);
 
@@ -64,7 +104,7 @@ function ResumeBuilderContent() {
           onFileSelect={handleFileSelect}
           onFileRemove={handleFileRemove}
           selectedFile={formData.resumeFile}
-          error={validationErrors.resumeFile}
+          error={validationErrors.resumeFile || extractionError || undefined}
         />
       </div>
 
