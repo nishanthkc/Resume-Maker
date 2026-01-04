@@ -33,7 +33,7 @@ export interface ResumeFormContextValue {
   updateResumeFile: (file: ResumeFileData | null) => void;
   updateJobDescription: (text: string) => void;
   updateJobRole: (role: string) => void;
-  updateTemplate: (template: ResumeTemplate) => void;
+  updateTemplate: (template: ResumeTemplate | null) => void;
   updatePersonalizationPrompt: (prompt: string) => void;
   nextStep: () => void;
   prevStep: () => void;

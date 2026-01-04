@@ -5,8 +5,10 @@ import { ResumeFormProvider, useResumeForm } from '@/context/resume-form-context
 import FileUpload from '@/components/file-upload';
 import StepIndicator from '@/components/step-indicator';
 import StepNavigation from '@/components/step-navigation';
+import ResumeTemplateCard from '@/components/resume-template-card';
 import type { ResumeFileData } from '@/types/resume-form';
 import { getFileTypeFromFilename } from '@/utils/file-utils';
+import { getAvailableTemplates } from '@/utils/template-utils';
 import { extractDocxText, extractPdfText, readLatexFile } from '@/utils/text-extraction';
 
 function ResumeBuilderContent() {
@@ -14,6 +16,8 @@ function ResumeBuilderContent() {
     formData,
     updateResumeFile,
     updateJobDescription,
+    updateJobRole,
+    updateTemplate,
     nextStep,
     prevStep,
     validationErrors,
@@ -82,6 +86,10 @@ function ResumeBuilderContent() {
     updateJobDescription(e.target.value);
   }, [updateJobDescription]);
 
+  const handleJobRoleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateJobRole(e.target.value);
+  }, [updateJobRole]);
+
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
@@ -140,21 +148,74 @@ function ResumeBuilderContent() {
     </div>
   );
 
-  const renderStep2 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-foreground mb-2">
-        Step 2: Job Role & Template
-      </h2>
-      <p className="text-foreground-muted mb-6">
-        Step 2 content will be implemented in future tasks.
-      </p>
-      <StepNavigation
-        onPrevious={prevStep}
-        onNext={nextStep}
-        isFirstStep={false}
-      />
-    </div>
-  );
+  const renderStep2 = () => {
+    const availableTemplates = getAvailableTemplates(formData.resumeFile?.type || null);
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground mb-2">
+            Step 2: Job Role & Template
+          </h2>
+          <p className="text-foreground-muted mb-6">
+            Enter the job role/title and select a template.
+          </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="job-role"
+            className="block text-sm font-medium text-foreground-secondary mb-2"
+          >
+            Job Role / Title
+          </label>
+          <input
+            id="job-role"
+            type="text"
+            value={formData.jobRole}
+            onChange={handleJobRoleChange}
+            placeholder="e.g., Software Engineer, Product Manager, etc."
+            className={`w-full px-4 py-3 border rounded-lg bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-accent ${
+              validationErrors.jobRole ? 'border-error' : 'border-border'
+            }`}
+          />
+          {validationErrors.jobRole && (
+            <p className="mt-2 text-error text-sm">
+              {validationErrors.jobRole}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Choose a Template
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {availableTemplates.map((template) => (
+              <ResumeTemplateCard
+                key={template}
+                template={template}
+                selected={formData.template === template}
+                onSelect={updateTemplate}
+                hasError={!!validationErrors.template}
+              />
+            ))}
+          </div>
+          {validationErrors.template && (
+            <p className="mt-2 text-error text-sm">
+              {validationErrors.template}
+            </p>
+          )}
+        </div>
+
+        <StepNavigation
+          onPrevious={prevStep}
+          onNext={nextStep}
+          isFirstStep={false}
+        />
+      </div>
+    );
+  };
 
   const renderStep3 = () => (
     <div className="space-y-6">

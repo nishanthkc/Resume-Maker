@@ -53,11 +53,17 @@ export function ResumeFormProvider({ children, isAuthenticated = false }: Resume
 
   const updateJobRole = useCallback((role: string) => {
     setFormData((prev) => ({ ...prev, jobRole: role }));
-  }, []);
+    // Clear error if text is non-empty (after trim)
+    if (role.trim() !== '') {
+      clearValidationError('jobRole');
+    }
+  }, [clearValidationError]);
 
-  const updateTemplate = useCallback((template: ResumeTemplate) => {
+  const updateTemplate = useCallback((template: ResumeTemplate | null) => {
     setFormData((prev) => ({ ...prev, template }));
-  }, []);
+    // Clear error when template is set (user is interacting)
+    clearValidationError('template');
+  }, [clearValidationError]);
 
   const updatePersonalizationPrompt = useCallback((prompt: string) => {
     setFormData((prev) => ({ ...prev, personalizationPrompt: prompt }));

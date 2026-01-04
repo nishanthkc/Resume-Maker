@@ -31,15 +31,21 @@ export function validateStep1(data: Partial<ResumeFormData>): ValidationResult {
  * Returns errors for missing fields or invalid template selection
  */
 export function validateStep2(data: Partial<ResumeFormData>): ValidationResult {
-  // TODO: Implement validation logic
-  // - Check if jobRole is provided and non-empty
-  // - Check if template is selected
-  // - Show template "your-format" only when resumeFile.type is 'tex'
-  // - Return appropriate error messages
-  
+  const errors: Record<string, string> = {};
+
+  // Check if job role is provided and non-empty
+  if (!data.jobRole || data.jobRole.trim() === '') {
+    errors.jobRole = 'Please enter a job role/title';
+  }
+
+  // Check if template is selected
+  if (!data.template) {
+    errors.template = 'Please select a template';
+  }
+
   return {
-    isValid: true,
-    errors: {},
+    isValid: Object.keys(errors).length === 0,
+    errors,
   };
 }
 
