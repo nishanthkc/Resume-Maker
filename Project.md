@@ -172,46 +172,49 @@ A landing page with a brief description of the application and a "Get Started" b
 ### Phase 4: Step 2 - Job Role & Template Selection
 
 #### Task 4.1: Job Role Input
-- [ ] Create input field for job role/title
-- [ ] Add autocomplete suggestions (optional enhancement)
-- [ ] Store in form context
+- [x] Create input field for job role/title
+- [x] Add autocomplete suggestions (optional enhancement)
+- [x] Store in form context
 
 #### Task 4.2: Template Selection UI
-- [ ] Design template card components:
+- [x] Design template card components:
   - Modern template card
   - Classic template card
   - Old-school template card
   - "Your Format" card (only for LaTeX files)
-- [ ] Add template preview images/placeholders
-- [ ] Implement single-selection logic
-- [ ] Add visual feedback (selected state)
+- [x] Add template preview images/placeholders
+- [x] Implement single-selection logic
+- [x] Add visual feedback (selected state)
 
 #### Task 4.3: Conditional Template Display
-- [ ] Show 3 templates for PDF/DOCX files
-- [ ] Show 4 templates (including "Your Format") for LaTeX files
-- [ ] Implement conditional rendering logic
+- [x] Show 3 templates for PDF/DOCX files
+- [x] Show 4 templates (including "Your Format") for LaTeX files
+- [x] Implement conditional rendering logic
 
 #### Task 4.4: Step 2 Integration
-- [ ] Combine job role + template selection
-- [ ] Add validation (both required)
-- [ ] Add "Back" and "Next" buttons
-- [ ] Test template selection flow
+- [x] Combine job role + template selection
+- [x] Add validation (both required)
+- [x] Add "Back" and "Next" buttons
+- [x] Test template selection flow
 
 ---
 
 ### Phase 5: Authentication & Database Setup
 
 #### Task 5.1: Supabase Project Setup
-- [ ] Create Supabase project
-- [ ] Get Supabase URL and anon key
-- [ ] Add Supabase credentials to `.env.local`
-- [ ] Install Supabase client library
+- [x] Create Supabase project
+- [x] Get Supabase URL and anon key
+- [x] Add Supabase credentials to `.env.local`
+- [x] Install Supabase client library
+- [x] Install `@supabase/ssr` for Next.js App Router support
 
 #### Task 5.2: Google OAuth Configuration
-- [ ] Create Google OAuth 2.0 credentials
-- [ ] Configure OAuth in Supabase dashboard
-- [ ] Set up redirect URLs
-- [ ] Test OAuth flow
+- [x] Create Google OAuth 2.0 credentials
+- [x] Configure OAuth in Supabase dashboard
+- [x] Set up redirect URLs
+- [x] Implement PKCE flow for secure OAuth
+- [x] Test OAuth flow
+- **📖 See [OAuth-signin.md](./OAuth-signin.md) for detailed implementation documentation**
 
 #### Task 5.3: Database Schema Design
 - [ ] Design database tables:
@@ -220,10 +223,11 @@ A landing page with a brief description of the application and a "Get Started" b
 - [ ] Set up Row Level Security (RLS) policies
 
 #### Task 5.4: Supabase Client Setup
-- [ ] Create Supabase client utility
-- [ ] Set up client-side auth hooks
-- [ ] Create auth context/provider
-- [ ] Implement login/logout functions
+- [x] Create Supabase client utility (client-side and server-side)
+- [x] Set up client-side auth hooks
+- [x] Create auth context/provider
+- [x] Implement login/logout functions
+- [x] Integrate auth state management in navbar
 
 ---
 
@@ -412,7 +416,7 @@ OPENAI_API_KEY=
 - Keep environment variables secure (never commit `.env.local`)
 - Consider adding unit tests for critical functions
 - Consider adding E2E tests for the full flow
-- Document Supabase setup process thoroughly (as you're new to it)
+- **Authentication Documentation:** See [OAuth-signin.md](./OAuth-signin.md) for comprehensive Google OAuth implementation details, setup instructions, and troubleshooting guide
 
 ---
 
@@ -427,6 +431,7 @@ OPENAI_API_KEY=
   - `mammoth` (v1.11.0) for DOCX extraction
   - `pdfjs-dist` (v5.4.530) for PDF extraction
   - `@supabase/supabase-js` (v2.89.0) for auth & database
+  - `@supabase/ssr` for Next.js App Router cookie-based auth
   - `openai` (v6.15.0) for LLM integration
   - `uuid` (v13.0.0) for unique identifiers
 - TypeScript paths and aliases configured (`@/*` mapping)
@@ -474,8 +479,10 @@ OPENAI_API_KEY=
 - Next.js App Router routes set up:
   - `/` - Landing page (`app/page.tsx`) ✅
   - `/resume-builder` - Main multi-step form (`app/resume-builder/page.tsx`) ✅
+  - `/auth/callback` - OAuth callback route ✅
+  - `/auth/auth-code-error` - OAuth error page ✅
 - Navigation between routes working correctly
-- Route protection deferred to Phase 5 (when authentication is implemented)
+- Route protection deferred (authentication is now implemented in Phase 5)
 
 ### Phase 2: Landing Page ✅
 
@@ -490,6 +497,71 @@ OPENAI_API_KEY=
 - Fully responsive design (mobile, tablet, desktop)
 - All interactive elements styled with theme-aware colors
 - Smooth hover effects and transitions
+
+### Phase 5: Authentication & Database Setup ✅ (Partial)
+
+#### Task 5.1: Supabase Project Setup ✅
+**Completed:**
+- Installed `@supabase/supabase-js` (v2.89.0) and `@supabase/ssr` for Next.js App Router support
+- Created Supabase client utilities:
+  - `utils/supabase/client.ts` - Client-side Supabase client using `createBrowserClient`
+  - `utils/supabase/server.ts` - Server-side Supabase client using `createServerClient` with cookie management
+- Environment variables structure documented:
+  - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
+- **Note:** Manual setup required: Create Supabase project and add credentials to `.env.local`
+
+#### Task 5.2: Google OAuth Configuration ✅
+**Completed:**
+- Implemented Google OAuth with PKCE (Proof Key for Code Exchange) flow for enhanced security
+- Created OAuth callback route (`app/auth/callback/route.ts`):
+  - Handles authorization code exchange for session
+  - Saves session to HTTP-only cookies
+  - Redirects user back to original page after authentication
+- Created error page (`app/auth/auth-code-error/page.tsx`) for OAuth failures
+- **📖 Detailed documentation:** See [OAuth-signin.md](./OAuth-signin.md) for:
+  - Complete implementation details
+  - Setup instructions for Google Cloud Console
+  - Code explanations and architecture
+  - Troubleshooting guide
+  - Reference links to Supabase and Next.js documentation
+
+#### Task 5.4: Supabase Client Setup ✅
+**Completed:**
+- Created client-side Supabase client utility (`utils/supabase/client.ts`)
+- Created server-side Supabase client utility (`utils/supabase/server.ts`)
+- Created authentication context (`context/auth-context.tsx`):
+  - Manages user session state with React Context API
+  - Provides `signIn()` function that triggers Google OAuth flow
+  - Provides `signOut()` function for user logout
+  - Real-time auth state synchronization via `onAuthStateChange` listener
+  - Exports `useAuth()` hook for consuming components
+- Created auth provider wrapper (`components/providers/auth-provider.tsx`)
+- Integrated `AuthProvider` in root layout (`app/layout.tsx`)
+- Updated navbar (`components/layout/navbar.tsx`):
+  - Shows "Sign In" button when user is not authenticated
+  - Shows user email/name and "Sign Out" button when authenticated
+  - Handles loading states gracefully
+  - Triggers OAuth flow directly from navbar button
+
+**Key Implementation Details:**
+- **PKCE Flow:** Uses secure code exchange flow recommended for Next.js App Router
+- **Cookie-Based Sessions:** Sessions stored in HTTP-only cookies for security
+- **Server-Side Rendering Safe:** Compatible with Next.js App Router SSR
+- **Type-Safe:** Full TypeScript support with proper type definitions
+- **Real-Time Updates:** Auth state automatically syncs across the application
+
+**Manual Configuration Required:**
+1. Create Supabase project and get URL/anon key
+2. Configure Google OAuth in Supabase Dashboard (Authentication → Providers → Google)
+3. Set up Google Cloud Console OAuth credentials
+4. Add authorized redirect URIs in Google Console
+5. See [OAuth-signin.md](./OAuth-signin.md) for detailed setup instructions
+
+#### Task 5.3: Database Schema Design
+**Status:** Not yet implemented
+- Database schema design deferred until needed for resume storage
+- Will be implemented when building resume history/management features
 
 ---
 
