@@ -217,10 +217,14 @@ A landing page with a brief description of the application and a "Get Started" b
 - **📖 See [OAuth-signin.md](./OAuth-signin.md) for detailed implementation documentation**
 
 #### Task 5.3: Database Schema Design
-- [ ] Design database tables:
-  - `resumes` table (id, user_id, resume_content, job_description, job_role, template, personalization_prompt, created_at, updated_at)
-- [ ] Create migrations in Supabase
-- [ ] Set up Row Level Security (RLS) policies
+- [x] Design database tables:
+  - `resumes` table with all input/output fields (id, user_id, resume_file_type, resume_file_name, resume_extracted_text, job_description, job_role, template, personalization_prompt, s3_url, created_at, updated_at)
+  - user_id: UUID with foreign key to auth.users(id), NULL for guest users
+- [x] Create migrations in Supabase using Supabase CLI
+- [x] Set up Row Level Security (RLS) policies (3 policies: SELECT, INSERT for users, INSERT for guests)
+- [x] Create indexes for performance (user_id, created_at)
+- [x] Create trigger function and trigger for auto-updating updated_at
+- **📖 See [supabase/README.md](./supabase/README.md) for migration setup instructions**
 
 #### Task 5.4: Supabase Client Setup
 - [x] Create Supabase client utility (client-side and server-side)
@@ -526,6 +530,48 @@ OPENAI_API_KEY=
   - Troubleshooting guide
   - Reference links to Supabase and Next.js documentation
 
+#### Task 5.3: Database Schema Design ✅
+**Completed:**
+- Designed and created `resumes` table schema with:
+  - **Input fields**: resume_file_type, resume_file_name, resume_extracted_text, job_description, job_role, template, personalization_prompt
+  - **Output field**: s3_url (populated after LLM processing)
+  - **Metadata**: id (UUID primary key), user_id (UUID foreign key to auth.users, nullable for guests), created_at, updated_at
+- **User association**: 
+  - Authenticated users: `user_id = auth.uid()` (UUID from auth.users)
+  - Guest users: `user_id = NULL`
+  - Foreign key constraint: `REFERENCES auth.users(id) ON DELETE CASCADE`
+- Created migration file using Supabase CLI:
+  - `supabase/migrations/20260105202050_create_resumes_table.sql`
+  - Includes table creation, indexes, trigger function, trigger, and RLS policies
+- Set up Row Level Security (RLS) with 3 policies:
+  - **"Users can view own resumes"**: SELECT policy for authenticated users to view their resume history
+  - **"Users can insert own resumes"**: INSERT policy for authenticated users
+  - **"Allow guest inserts"**: INSERT policy for guest users (user_id = NULL)
+- Created performance indexes:
+  - `idx_resumes_user_id` on `resumes(user_id)`
+  - `idx_resumes_created_at` on `resumes(created_at DESC)`
+- Created trigger function and trigger:
+  - `update_updated_at_column()` function
+  - `update_resumes_updated_at` trigger (BEFORE UPDATE) for auto-updating updated_at
+- Created `supabase/README.md` with:
+  - Supabase CLI setup instructions
+  - Migration workflow documentation
+  - Database schema documentation
+  - Verification checklist
+
+**Key Implementation Details:**
+- **Foreign Key Constraint**: Ensures data integrity with auth.users table
+- **Cascade Delete**: Automatically deletes user's resumes when user is deleted
+- **Type Safety**: UUID type for user_id (more efficient than TEXT)
+- **Guest Support**: NULL user_id for guest users, allowing them to use the app without authentication
+- **Read-Only Operations**: Only INSERT and SELECT operations (no UPDATE or DELETE needed)
+
+**Manual Steps Required:**
+1. Link Supabase project: `npx supabase link --project-ref <project-ref>`
+2. Apply migration: `npx supabase db push`
+3. Verify in Supabase Dashboard (table, policies, indexes, triggers)
+4. **📖 See [supabase/README.md](./supabase/README.md) for detailed setup instructions**
+
 #### Task 5.4: Supabase Client Setup ✅
 **Completed:**
 - Created client-side Supabase client utility (`utils/supabase/client.ts`)
@@ -557,11 +603,6 @@ OPENAI_API_KEY=
 3. Set up Google Cloud Console OAuth credentials
 4. Add authorized redirect URIs in Google Console
 5. See [OAuth-signin.md](./OAuth-signin.md) for detailed setup instructions
-
-#### Task 5.3: Database Schema Design
-**Status:** Not yet implemented
-- Database schema design deferred until needed for resume storage
-- Will be implemented when building resume history/management features
 
 ---
 

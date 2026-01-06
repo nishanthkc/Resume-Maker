@@ -56,8 +56,8 @@ export default function Navbar() {
           </div>
         ) : (
           <Button onClick={handleSignIn} variant="primary">
-            Sign In
-          </Button>
+          Sign In
+        </Button>
         )}
       </div>
     </nav>
