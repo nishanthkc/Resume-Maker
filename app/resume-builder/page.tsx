@@ -13,6 +13,7 @@ import { getFileTypeFromFilename } from '@/utils/file-utils';
 import { getAvailableTemplates } from '@/utils/template-utils';
 import { extractDocxText, extractPdfText, readLatexFile } from '@/utils/text-extraction';
 import { validateStep3 } from '@/utils/validation';
+import { buildResumePrompt } from '@/lib/server/prompt-builder';
 
 function ResumeBuilderContent() {
   const {
@@ -130,6 +131,7 @@ function ResumeBuilderContent() {
           template: formData.template,
           personalizationPrompt: formData.personalizationPrompt,
           user: user ? { id: user.id, email: user.email } : null,
+          buildResumePrompt: buildResumePrompt(formData),
         });
         
         setIsCompleted(true);

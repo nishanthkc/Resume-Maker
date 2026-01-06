@@ -261,15 +261,19 @@ A landing page with a brief description of the application and a "Get Started" b
 ### Phase 7: Step 4 - LLM Processing & S3 Upload
 
 #### Task 7.1: System Prompt Engineering
-- [ ] Design LLM system prompt structure:
+- [x] Design LLM system prompt structure:
   - Include resume content
   - Include job description
   - Include job role
   - Include template selection
   - Include personalization prompt (if provided)
   - Include LaTeX formatting instructions
-- [ ] Create prompt template function
-- [ ] Test prompt with sample data
+- [x] Create prompt template function (`lib/server/prompt-builder.ts`)
+- [x] Accept `ResumeFormData` as input parameter
+- [x] Implement conditional logic for "your-format" template rules
+- [x] Dynamic job role insertion throughout prompt
+- [x] Include LaTeX template example for format reference
+- [ ] Test prompt with sample data (manual testing required)
 
 #### Task 7.2: OpenAI API Integration
 - [ ] Install OpenAI SDK
