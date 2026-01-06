@@ -238,22 +238,23 @@ A landing page with a brief description of the application and a "Get Started" b
 ### Phase 6: Step 3 - Personalization Prompt (Optional)
 
 #### Task 6.1: Personalization Input Component
-- [ ] Create textarea for personalization prompt
-- [ ] Add placeholder text with examples
-- [ ] Add character limit (optional)
+- [x] Create textarea for personalization prompt
+- [x] Add placeholder text with examples
+- [x] Add helpful description text explaining the field's purpose
 
 #### Task 6.2: Authentication-Based Enable/Disable
-- [ ] Check authentication status
-- [ ] Disable input for guest users
-- [ ] Enable input for authenticated users
-- [ ] Show login prompt for guests
-- [ ] Add "Skip" button for guests
+- [x] Check authentication status
+- [x] Disable input for guest users
+- [x] Enable input for authenticated users
+- [x] Show login prompt for guests (prominent banner + overlay)
+- [x] Implement sessionStorage persistence for form state during OAuth redirect
+- [x] Restore form state after authentication (preserves step and all inputs)
 
 #### Task 6.3: Step 3 Integration
-- [ ] Combine personalization input with auth logic
-- [ ] Store prompt in form context (empty string for guests)
-- [ ] Add "Back" and "Next" buttons
-- [ ] Test both authenticated and guest flows
+- [x] Combine personalization input with auth logic
+- [x] Store prompt in form context (empty string for guests)
+- [x] Add "Back" and "Next" buttons
+- [ ] Test both authenticated and guest flows (manual testing required)
 
 ---
 
@@ -502,7 +503,7 @@ OPENAI_API_KEY=
 - All interactive elements styled with theme-aware colors
 - Smooth hover effects and transitions
 
-### Phase 5: Authentication & Database Setup ✅ (Partial)
+### Phase 5: Authentication & Database Setup ✅
 
 #### Task 5.1: Supabase Project Setup ✅
 **Completed:**

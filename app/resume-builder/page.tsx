@@ -1,15 +1,18 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { ResumeFormProvider, useResumeForm } from '@/context/resume-form-context';
+import { ResumeFormProvider, useResumeForm, saveResumeFormState } from '@/context/resume-form-context';
+import { useAuth } from '@/context/auth-context';
 import FileUpload from '@/components/file-upload';
 import StepIndicator from '@/components/step-indicator';
 import StepNavigation from '@/components/step-navigation';
 import ResumeTemplateCard from '@/components/resume-template-card';
+import Button from '@/components/button';
 import type { ResumeFileData } from '@/types/resume-form';
 import { getFileTypeFromFilename } from '@/utils/file-utils';
 import { getAvailableTemplates } from '@/utils/template-utils';
 import { extractDocxText, extractPdfText, readLatexFile } from '@/utils/text-extraction';
+import { validateStep3 } from '@/utils/validation';
 
 function ResumeBuilderContent() {
   const {
@@ -18,11 +21,14 @@ function ResumeBuilderContent() {
     updateJobDescription,
     updateJobRole,
     updateTemplate,
+    updatePersonalizationPrompt,
     nextStep,
     prevStep,
     validationErrors,
   } = useResumeForm();
+  const { user, signIn } = useAuth();
   const [extractionError, setExtractionError] = useState<string | null>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const handleFileSelect = useCallback(async (file: File) => {
     const fileType = getFileTypeFromFilename(file.name);
@@ -90,6 +96,49 @@ function ResumeBuilderContent() {
     updateJobRole(e.target.value);
   }, [updateJobRole]);
 
+  const handlePersonalizationChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updatePersonalizationPrompt(e.target.value);
+  }, [updatePersonalizationPrompt]);
+
+  const handleSignIn = useCallback(async () => {
+    try {
+      // Save current form state before OAuth redirect
+      saveResumeFormState(formData);
+      await signIn();
+    } catch (error) {
+      console.error('Failed to sign in:', error);
+    }
+  }, [formData, signIn]);
+
+  const handleNextStep = useCallback(() => {
+    // If on step 3, this is completion
+    if (formData.currentStep === 3) {
+      // Validate step 3 (optional step, always passes)
+      const validationResult = validateStep3(formData, !!user);
+      
+      if (validationResult.isValid) {
+        // Log all resume data
+        console.log('Resume Data:', {
+          resumeFile: {
+            type: formData.resumeFile?.type,
+            name: formData.resumeFile?.name,
+            size: formData.resumeFile?.size,
+            extractedText: formData.resumeFile?.extractedText,
+          },
+          jobDescription: formData.jobDescription,
+          jobRole: formData.jobRole,
+          template: formData.template,
+          personalizationPrompt: formData.personalizationPrompt,
+          user: user ? { id: user.id, email: user.email } : null,
+        });
+        
+        setIsCompleted(true);
+      }
+    } else {
+      nextStep();
+    }
+  }, [formData, user, nextStep]);
+
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
@@ -142,7 +191,7 @@ function ResumeBuilderContent() {
 
       <StepNavigation
         onPrevious={prevStep}
-        onNext={nextStep}
+        onNext={handleNextStep}
         isFirstStep={formData.currentStep === 1}
       />
     </div>
@@ -210,7 +259,7 @@ function ResumeBuilderContent() {
 
         <StepNavigation
           onPrevious={prevStep}
-          onNext={nextStep}
+          onNext={handleNextStep}
           isFirstStep={false}
         />
       </div>
@@ -219,18 +268,82 @@ function ResumeBuilderContent() {
 
   const renderStep3 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-foreground mb-2">
-        Step 3: Personalization (Optional)
-      </h2>
-      <p className="text-foreground-muted mb-6">
-        Step 3 content will be implemented in future tasks.
-      </p>
+      <div>
+        <h2 className="text-2xl font-semibold text-foreground mb-2">
+          Step 3: Personalization (Optional)
+        </h2>
+        <p className="text-foreground-muted mb-6">
+          Sign in to add additional instructions on how you'd like your resume tailored.
+        </p>
+      </div>
+
+      <div>
+        <label
+          htmlFor="personalization-prompt"
+          className="block text-sm font-medium text-foreground-secondary mb-2"
+        >
+          Personalization Prompt <span className="text-foreground-muted font-normal">(Optional)</span>
+        </label>
+        <div className="relative">
+          <textarea
+            id="personalization-prompt"
+            value={formData.personalizationPrompt}
+            onChange={handlePersonalizationChange}
+            disabled={!user}
+            placeholder={user 
+              ? "e.g., Add a project I did with React, Next.js, and AWS. Emphasize my leadership experience in team projects. Highlight my experience with cloud infrastructure..."
+              : ""
+            }
+            rows={8}
+            className={`w-full px-4 py-3 border rounded-lg bg-background-secondary text-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-y border-border ${
+              !user 
+                ? "opacity-60 cursor-not-allowed" 
+                : ""
+            }`}
+          />
+          {!user && (
+            <div 
+              className="absolute inset-0 flex items-center justify-center bg-background-secondary/80 rounded-lg cursor-pointer"
+              onClick={handleSignIn}
+            >
+              <div className="text-center" onClick={(e) => e.stopPropagation()}>
+                <p className="text-foreground-muted mb-2">Sign in to unlock</p>
+                <Button 
+                  onClick={() => handleSignIn()} 
+                  variant="primary"
+                >
+                  Sign In
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+        {user && (
+          <p className="mt-2 text-foreground-muted text-sm">
+            Use this field to provide specific instructions on how you want your resume tailored. For example, you can mention specific projects, skills, or experiences you'd like emphasized or added.
+          </p>
+        )}
+      </div>
+
       <StepNavigation
         onPrevious={prevStep}
-        onNext={nextStep}
+        onNext={handleNextStep}
         isFirstStep={false}
         isLastStep={true}
       />
+    </div>
+  );
+
+  const renderCompleted = () => (
+    <div className="space-y-6 text-center">
+      <div>
+        <h2 className="text-3xl font-semibold text-foreground mb-4">
+          COMPLETED Resume
+        </h2>
+        <p className="text-foreground-muted">
+          Your resume data has been logged to the console.
+        </p>
+      </div>
     </div>
   );
 
@@ -246,12 +359,16 @@ function ResumeBuilderContent() {
           </p>
 
           <div className="mb-8">
-            <StepIndicator currentStep={formData.currentStep} totalSteps={3} />
+            <StepIndicator currentStep={isCompleted ? 3 : formData.currentStep} totalSteps={3} />
           </div>
 
-          {formData.currentStep === 1 && renderStep1()}
-          {formData.currentStep === 2 && renderStep2()}
-          {formData.currentStep === 3 && renderStep3()}
+          {isCompleted ? renderCompleted() : (
+            <>
+              {formData.currentStep === 1 && renderStep1()}
+              {formData.currentStep === 2 && renderStep2()}
+              {formData.currentStep === 3 && renderStep3()}
+            </>
+          )}
         </div>
       </main>
     </div>

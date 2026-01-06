@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { ResumeFormData, ResumeFileData, ResumeTemplate, ResumeFormContextValue } from '@/types/resume-form';
 import { validateStep1, validateStep2, validateStep3 } from '@/utils/validation';
 
@@ -22,9 +22,26 @@ interface ResumeFormProviderProps {
   isAuthenticated?: boolean; // For Step 3 validation, can be passed from parent
 }
 
+const STORAGE_KEY = 'resume-form-state';
+
 export function ResumeFormProvider({ children, isAuthenticated = false }: ResumeFormProviderProps) {
   const [formData, setFormData] = useState<ResumeFormData>(initialFormData);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Restore form state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const restored = JSON.parse(saved) as ResumeFormData;
+        setFormData(restored);
+        sessionStorage.removeItem(STORAGE_KEY); // Clear after restore
+      }
+    } catch (error) {
+      console.error('Failed to restore form state from sessionStorage:', error);
+      // If restoration fails, continue with initial state
+    }
+  }, []); // Only run on mount
 
   // Helper function to clear a specific validation error
   const clearValidationError = useCallback((key: string) => {
@@ -108,6 +125,15 @@ export function ResumeFormProvider({ children, isAuthenticated = false }: Resume
     }
   }, [formData.currentStep]);
 
+  // Function to save form state to sessionStorage (exported via context if needed)
+  const saveFormStateToStorage = useCallback((data: ResumeFormData) => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to save form state to sessionStorage:', error);
+    }
+  }, []);
+
   const contextValue: ResumeFormContextValue = {
     formData,
     updateResumeFile,
@@ -125,6 +151,15 @@ export function ResumeFormProvider({ children, isAuthenticated = false }: Resume
       {children}
     </ResumeFormContext.Provider>
   );
+}
+
+// Export function to save form state (for use before OAuth redirect)
+export function saveResumeFormState(formData: ResumeFormData): void {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  } catch (error) {
+    console.error('Failed to save form state to sessionStorage:', error);
+  }
 }
 
 // Custom hook to use the context
